@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WSDL del servicio SOAP de equipos. La URL del endpoint se reemplaza en tiempo de ejecución. -->
+<definitions name="EquiposService"
+    targetNamespace="urn:EquiposService"
+    xmlns:tns="urn:EquiposService"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <types>
+    <xsd:schema targetNamespace="urn:EquiposService">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+      <xsd:complexType name="Equipo">
+        <xsd:all>
+          <xsd:element name="id"     type="xsd:int"/>
+          <xsd:element name="codigo" type="xsd:string"/>
+          <xsd:element name="nombre" type="xsd:string"/>
+          <xsd:element name="tipo"   type="xsd:string"/>
+          <xsd:element name="estado" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="ArrayOfEquipo">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="tns:Equipo[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="RespuestaEquipo">
+        <xsd:all>
+          <xsd:element name="exito"   type="xsd:boolean"/>
+          <xsd:element name="mensaje" type="xsd:string"/>
+          <xsd:element name="equipo"  type="tns:Equipo" nillable="true"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="Mantenimiento">
+        <xsd:all>
+          <xsd:element name="id"                type="xsd:int"/>
+          <xsd:element name="equipoId"          type="xsd:int"/>
+          <xsd:element name="equipoCodigo"      type="xsd:string"/>
+          <xsd:element name="equipoNombre"      type="xsd:string"/>
+          <xsd:element name="tecnicoId"         type="xsd:int"/>
+          <xsd:element name="tecnicoNombre"     type="xsd:string"/>
+          <xsd:element name="tecnicoDocumento"  type="xsd:string"/>
+          <xsd:element name="tipoMantenimiento" type="xsd:string"/>
+          <xsd:element name="fecha"             type="xsd:string"/>
+          <xsd:element name="estado"            type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="ArrayOfMantenimiento">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="tns:Mantenimiento[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="RespuestaMantenimientos">
+        <xsd:all>
+          <xsd:element name="exito"           type="xsd:boolean"/>
+          <xsd:element name="mensaje"         type="xsd:string"/>
+          <xsd:element name="mantenimientos"  type="tns:ArrayOfMantenimiento"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- ===================== Mensajes ===================== -->
+  <message name="registrarEquipoRequest">
+    <part name="codigo" type="xsd:string"/>
+    <part name="nombre" type="xsd:string"/>
+    <part name="tipo"   type="xsd:string"/>
+    <part name="estado" type="xsd:string"/>
+  </message>
+  <message name="registrarEquipoResponse">
+    <part name="return" type="tns:RespuestaEquipo"/>
+  </message>
+
+  <message name="consultarEquipoRequest">
+    <part name="codigo" type="xsd:string"/>
+  </message>
+  <message name="consultarEquipoResponse">
+    <part name="return" type="tns:RespuestaEquipo"/>
+  </message>
+
+  <message name="listarEquiposRequest"/>
+  <message name="listarEquiposResponse">
+    <part name="return" type="tns:ArrayOfEquipo"/>
+  </message>
+
+  <message name="consultarMantenimientoRequest">
+    <part name="codigoEquipo" type="xsd:string"/>
+  </message>
+  <message name="consultarMantenimientoResponse">
+    <part name="return" type="tns:RespuestaMantenimientos"/>
+  </message>
+
+  <!-- ===================== Port type ===================== -->
+  <portType name="EquiposPortType">
+    <operation name="registrarEquipo">
+      <input message="tns:registrarEquipoRequest"/>
+      <output message="tns:registrarEquipoResponse"/>
+    </operation>
+    <operation name="consultarEquipo">
+      <input message="tns:consultarEquipoRequest"/>
+      <output message="tns:consultarEquipoResponse"/>
+    </operation>
+    <operation name="listarEquipos">
+      <input message="tns:listarEquiposRequest"/>
+      <output message="tns:listarEquiposResponse"/>
+    </operation>
+    <operation name="consultarMantenimiento">
+      <input message="tns:consultarMantenimientoRequest"/>
+      <output message="tns:consultarMantenimientoResponse"/>
+    </operation>
+  </portType>
+
+  <!-- ===================== Binding (RPC/encoded) ===================== -->
+  <binding name="EquiposBinding" type="tns:EquiposPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="registrarEquipo">
+      <soap:operation soapAction="urn:EquiposService#registrarEquipo"/>
+      <input><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+      <output><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+    </operation>
+    <operation name="consultarEquipo">
+      <soap:operation soapAction="urn:EquiposService#consultarEquipo"/>
+      <input><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+      <output><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+    </operation>
+    <operation name="listarEquipos">
+      <soap:operation soapAction="urn:EquiposService#listarEquipos"/>
+      <input><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+      <output><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+    </operation>
+    <operation name="consultarMantenimiento">
+      <soap:operation soapAction="urn:EquiposService#consultarMantenimiento"/>
+      <input><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+      <output><soap:body use="encoded" namespace="urn:EquiposService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+    </operation>
+  </binding>
+
+  <service name="EquiposService">
+    <port name="EquiposPort" binding="tns:EquiposBinding">
+      <soap:address location="{{SOAP_URL}}"/>
+    </port>
+  </service>
+</definitions>

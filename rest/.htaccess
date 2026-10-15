@@ -1,0 +1,5 @@
+# Para Apache/XAMPP: envía todas las rutas /api/... a index.php
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
